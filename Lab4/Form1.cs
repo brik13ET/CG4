@@ -21,25 +21,55 @@ namespace Lab4
 		{
 			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
-				pictureBox1.Image = Image.FromFile(openFileDialog1.FileName);
-
+				var b = Bitmap.FromFile(openFileDialog1.FileName);
+				pictureBox1.Image = b;
+				pictureBox2.Image = new Bitmap(b);
+				for (int i = 0; i < b.Width; i++)
+				{
+					for (int j = 0; j < b.Height; j++)
+					{
+						((Bitmap)pictureBox2.Image).SetPixel(i, j, grayscale((b as Bitmap).GetPixel(i, j)));
+					}
+				}
 
 			}
 		}
-
-		private void pictureBox1_Resize(object sender, EventArgs e)
-		{
-
-		}
-
+		
 		static Color grayscale(Color c)
 		{
 			byte gray = (byte)(c.R * 0.2 + c.G * 0.4 + c.B * 0.1);
 			return Color.FromArgb(255, gray, gray, gray);
 		}
 
-		private void pictureBox2_Click(object sender, EventArgs e)
+		static void Linear_cotrast(Bitmap b, PictureBox p)
 		{
+			byte low_l = 255;
+			byte hi_l = 0;
+			p.Image = new Bitmap(b);
+			for (int i = 0; i < b.Width; i++)
+			{
+				for (int j = 0; j < b.Height; j++)
+				{ // r == g == b == bright
+					if (b.GetPixel(i, j).B > hi_l)
+					{
+						hi_l = b.GetPixel(i, j).B;
+					}
+					if (b.GetPixel(i, j).B < low_l)
+					{
+						low_l = b.GetPixel(i, j).B;
+					}
+				}
+			}
+			byte r = (byte)(hi_l - low_l);
+			double q = 255 * r;
+			for (int i = 0; i < b.Width; i++)
+			{
+				for (int j = 0; j < b.Height; j++)
+				{
+					byte c = (byte)((b.GetPixel(i, j).B - low_l) * 255 / r);
+					(p.Image as Bitmap).SetPixel(i, j, Color.FromArgb(c, c, c));
+				}
+			}
 
 		}
 	}
