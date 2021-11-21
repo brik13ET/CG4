@@ -27,8 +27,8 @@ namespace Lab4
 			t.SetToolTip(pictureBox2, "Grayscale");
 			t.SetToolTip(pictureBox3, "LinearContrast");
 			t.SetToolTip(pictureBox4, "LinearSmoothMask");
-			t.SetToolTip(pictureBox5, "LMS diff Gray");
-			t.SetToolTip(pictureBox6, "Vector");
+			t.SetToolTip(pictureBox8, "LMS diff Gray");
+			t.SetToolTip(pictureBox5, "Vector");
 
 		}
 
@@ -60,6 +60,7 @@ namespace Lab4
 				var contrast = Linear_contrast(map);
 				var mask = linear_mask_filter(graymap);
 				var dif = diff(graymap, mask);
+				var mono = monochrome(graymap);
 				Cursor.Current = Cursors.Arrow;
 				this.UseWaitCursor = false;
 
@@ -67,11 +68,23 @@ namespace Lab4
 				Draw(contrast, pictureBox3);
 				Draw(mask, pictureBox4);
 				Draw(dif, pictureBox5);
-
-
+				Draw(mono, pictureBox9);
 			}
 		}
 
+		static void Draw(bool[,] m, PictureBox p)
+		{
+			int w = m.GetLength(0);
+			int h = m.GetLength(1);
+			var b = new Bitmap(w, h);
+			for (int i = 0; i < w; i++)
+				for (int j = 0; j < h; j++)
+					if (m[i, j])
+						b.SetPixel(i, j, Color.Black);
+					else
+						b.SetPixel(i, j, Color.White);
+			p.Image = b;
+		}
 		static void Draw(byte[,] m, PictureBox p)
 		{
 			int w = m.GetLength(0);
@@ -131,7 +144,16 @@ namespace Lab4
 				}
 			return ret;
 		}
-
+		static bool[,] monochrome(byte[,] m)
+		{
+			int w = m.GetLength(0);
+			int h = m.GetLength(1);
+			var ret = new bool[w, h];
+			for (int i = 0; i < w; i++)
+				for (int j = 0; j < h; j++)
+					ret[i, j] = m[i, j] <= 127;
+			return ret;
+		}
 		static byte[,] diff(byte[,] a1, byte[,] a2)
 		{
 			int w = Math.Min(a1.GetLength(0), a2.GetLength(0));
@@ -306,18 +328,19 @@ namespace Lab4
 			int w = M.GetLength(0);
 			int h = M.GetLength(1);
 			int h_w = 360;
-			int h_h = (int)Math.Sqrt(Math.Pow(w, 2) + Math.Pow(h, 2));
-
+			int h_h = (int)(Math.Max(w, h)) * 2;
+			var m = Copy<byte>(M);
 			var hough_acum = new int[h_w, h_h];
 			for (int i = 0; i < w; i++)
 				for (int j = 0; j < h; j++)
-				{
-					for (int a = 0; a < h_w; a++)
+					if (M[i, j] == 0)
 					{
-						double r = Math.Abs(i * Math.Cos(a * Math.PI / 180) + j * Math.Sin(a * Math.PI / 180));
-						hough_acum[a, (int)r] += 1;
+						for (int a = 0; a < h_w; a++)
+						{
+							double r = Math.Abs(i * Math.Cos(a * Math.PI / 180) + j * Math.Sin(a * Math.PI / 180));
+							hough_acum[a, (int)r] += 1;
+						}
 					}
-				}
 			int max = hough_acum[0,0];
 			int max_a = 0;
 			int max_r = 0;
@@ -331,17 +354,25 @@ namespace Lab4
 						max_r = j;
 					}
 				}
-			MessageBox.Show(string.Format("a: {0:0000}; r: {1:0000}; m: {2:0000}", max_a, max_r, max));
-			for (int i = 0; i < w; i++)
-				for (int j = 0; j < h; j++)
-				{
-					if (max_r == (int)(i*Math.Cos(max_a*Math.PI/180) + j * Math.Sin(max_a * Math.PI / 180)))
-						M[i, j] = 0;
-				}
-
+			line(m, -1 / (float)Math.Tan(max_a), max_r / (float)Math.Sin(max_a));
+			string[] f = {
+				string.Format("y = kx + b, k={0:0000.0000}, b={1:0000.0000}", -1 / Math.Tan(max_a), max_r / Math.Sin(max_a) ),
+				string.Format("\u03C1=P/cos(\u03D5 - \u03B1), P = {0}, \u03B1 = {1:000.0000}", max_r, max_a )
+			};
+			var view_f = new formula_view(f);
+			view_f.Show();
 			return M;
 		}
 
+		private static void line(byte[,] m, float k, float b)
+		{
+			if (k > 1)
+				for (int i = 0; i < m.GetLength(1); i++)
+					m[(int)((i - b) / k), (int)i] = 0;
+			else
+				for (int i = 0; i < m.GetLength(0) && k * i + b < m.GetLength(1); i++)
+					m[(int)i, (int)(k*i + b)] = 0;
+		}
 		
 		static T[,] Copy <T>(T[,] a)
 		{
@@ -353,33 +384,39 @@ namespace Lab4
 					M[i, j] = a[i, j];
 			return M;
 		}
-
-		private void pictureBox6_Click(object sender, EventArgs e)
+		
+		private void pictureBox1_DoubleClick(object sender, EventArgs e)
 		{
-			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+			if ((sender as PictureBox).Image != null)
 			{
-				this.UseWaitCursor = true;
-				Cursor.Current = Cursors.WaitCursor;
-				Bitmap b = new Bitmap(this.openFileDialog1.FileName);
-				byte[,] M = new byte[b.Width,b.Height];
-				for (int i = 0; i < b.Width; i++)
-				{
-					for (int j = 0; j < b.Height; j++)
-					{
-						var c = b.GetPixel(i, j);
-						M[i, j] = (byte)(c.R | c.G | c.B);
-					}
-				}
-				var h = hough(Copy<byte>(M));
-				Draw(h, pictureBox6);
-				Cursor.Current = Cursors.Arrow;
-				this.UseWaitCursor = false;
+				var f = new view((sender as PictureBox).Image);
+				f.Show();
 			}
 		}
 
-		private void pictureBox5_Click(object sender, EventArgs e)
+		private void pictureBox6_Click_1(object sender, MouseEventArgs e)
 		{
+			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				this.UseWaitCursor = true;
+				Cursor.Current = Cursors.WaitCursor;
+				this.Text = openFileDialog1.FileName;
 
+				var b = new Bitmap(openFileDialog1.FileName);
+				Color[,] buf = new Color[b.Width, b.Height];
+				for (int i = 0; i < b.Width; i++)
+					for (int j = 0; j < b.Height; j++)
+						buf[i, j] = b.GetPixel(i, j);
+				var gray = grayscale(buf);
+				var h = hough(Copy<byte>(gray));
+				var dif = diff(h, gray);
+
+				Draw(h, pictureBox6);
+				Draw(dif, pictureBox7);
+
+				this.UseWaitCursor = false;
+				Cursor.Current = Cursors.Arrow;
+			}
 		}
 	}
 }
