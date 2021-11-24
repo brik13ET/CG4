@@ -226,6 +226,24 @@ namespace Lab4
 		{
 			int w = cmap.GetLength(0);
 			int h = cmap.GetLength(1);
+			var cmap2 = new byte[w + 2, h + 2];
+			for (int i = 0; i < w; i++)
+				for (int j = 0; j < h; j++)
+					cmap2[i+1, j+1] = cmap[i, j];
+			for (int i = 0; i < h; i++)
+			{
+				cmap2[i + 1, 0] = cmap[i, 0];
+				cmap2[i + 1, h] = cmap[i, h - 1];
+			}
+			for (int i = 0; i < w; i++)
+			{
+				cmap2[0, i + 1] = cmap[0, i];
+				cmap2[w, i + 1] = cmap[w- 1, i];
+			}
+			cmap2[0, 0] = cmap[0, 0];
+			cmap2[0, h] = cmap[0, h-1];
+			cmap2[w, 0] = cmap[w-1, 0];
+			cmap2[w, h] = cmap[w-1, h-1];
 			var ret = new byte[w, h];
 			var M = new float[,]
 			{
@@ -234,61 +252,16 @@ namespace Lab4
 				{ 1, 1, 1 }
 			};
 			byte bri = 0;
-			for (int i = 1; i < w - 1; i++)
-				for (int j = 1; j < h - 1; j++)
+			for (int i = 1; i < w; i++)
+				for (int j = 1; j < h; j++)
 				{
 					bri = 0;
 					for (int I = -1; I <= 1; I++)
 						for (int J = -1; J <= 1; J++)
-							bri += (byte)(cmap[i + I, j + J] * M[1 + I, 1 + J] / 9);
+							bri += (byte)(cmap2[i + I, j + J] * M[1 + I, 1 + J] / 9);
 					ret[i, j] = (byte)bri;
 				}
-			for (int i = 1; i < w-1; i++)
-			{
-				bri = 0;
-				for (int I = -1; I <= 1; I++)
-					for (int J = 0; J <= 1; J++)
-						bri += (byte)(cmap[i + I, J] * M[1 + I, 1 + J] / 6);
-				ret[i, 0] = (byte)bri;
-				bri = 0;
-				for (int I = -1; I <= 1; I++)
-					for (int J = -1; J <= 0; J++)
-						bri += (byte)(cmap[i + I, h - 1 + J] * M[1 + I, 1 + J] / 6);
-				ret[i, h - 1] = (byte)bri;
-			}
-			for (int j = 1; j < h - 1; j++)
-			{
-				bri = 0;
-				for (int I = 0; I <= 1; I++)
-					for (int J = -1; J <= 1; J++)
-						bri += (byte)(cmap[I, j + J] * M[1 + I, 1 + J] / 6);
-				ret[0, j] = (byte)bri;
-				bri = 0;
-				for (int I = -1; I <= 0; I++)
-					for (int J = -1; J <= 1; J++)
-						bri += (byte)(cmap[w - 1 + I, j + J] * M[1 + I, 1 + J] / 6);
-				ret[w - 1, j] = (byte)bri;
-			}
-			bri = 0;
-			for (int I = 0; I <= 1; I++)
-				for (int J = 0; J <= 1; J++)
-					bri += (byte)(cmap[I, J] * M[1 + I, 1 + J] / 4);
-			ret[0, 0] = bri;
-			bri = 0;
-			for (int I = -1; I <= 0; I++)
-				for (int J = 0; J <= 1; J++)
-					bri += (byte)(cmap[w - 1 + I, J] * M[1 + I, 1 + J] / 4);
-			ret[w - 1, 0] = bri;
-			bri = 0;
-			for (int I = -1; I <= 0; I++)
-				for (int J = -1; J <= 0; J++)
-					bri += (byte)(cmap[w - 1 + I, h - 1 + J] * M[1 + I, 1 + J] / 4);
-			ret[w - 1, h - 1] = bri;
-			bri = 0;
-			for (int I = 0; I <= 1; I++)
-				for (int J = -1; J <= 0; J++)
-					bri += (byte)(cmap[I, h - 1 + J] * M[1 + I, 1 + J] / 4);
-			ret[0, h - 1] = bri;
+
 			return ret;
 		}
 
@@ -328,8 +301,8 @@ namespace Lab4
 			int w = M.GetLength(0);
 			int h = M.GetLength(1);
 			int h_w = 360;
-			int h_h = (int)(Math.Max(w, h)) * 2;
-			var m = Copy<byte>(M);
+			int h_h = (int)(Math.Max(w, h) * Math.Max(w, h));
+			var m = new byte[w, h];
 			var hough_acum = new int[h_w, h_h];
 			for (int i = 0; i < w; i++)
 				for (int j = 0; j < h; j++)
@@ -361,17 +334,21 @@ namespace Lab4
 			};
 			var view_f = new formula_view(f);
 			view_f.Show();
-			return M;
+			return m;
 		}
 
 		private static void line(byte[,] m, float k, float b)
 		{
 			if (k > 1)
 				for (int i = 0; i < m.GetLength(1); i++)
-					m[(int)((i - b) / k), (int)i] = 0;
+				{
+					if ((i - b) / k > 0)
+						m[(int)((i - b) / k), (int)i] = 255;
+				}
 			else
 				for (int i = 0; i < m.GetLength(0) && k * i + b < m.GetLength(1); i++)
-					m[(int)i, (int)(k*i + b)] = 0;
+					if (k * i + b >= 0)
+						m[(int)i, (int)(k * i + b)] = 255;
 		}
 		
 		static T[,] Copy <T>(T[,] a)
@@ -417,6 +394,11 @@ namespace Lab4
 				this.UseWaitCursor = false;
 				Cursor.Current = Cursors.Arrow;
 			}
+		}
+
+		private void pictureBox6_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

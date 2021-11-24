@@ -99,7 +99,7 @@
 			// 
 			this.toolStripMenuItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(50, 20);
 			this.toolStripMenuItem1.Text = "Select";
 			this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
 			// 
@@ -113,7 +113,7 @@
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(23, 20);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(24, 20);
 			this.toolStripMenuItem3.Text = "-";
 			this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
 			// 
@@ -219,6 +219,7 @@
 			this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.pictureBox6.TabIndex = 8;
 			this.pictureBox6.TabStop = false;
+			this.pictureBox6.Click += new System.EventHandler(this.pictureBox6_Click);
 			this.pictureBox6.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
 			this.pictureBox6.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox6_Click_1);
 			// 
