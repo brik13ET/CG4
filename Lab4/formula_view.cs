@@ -25,6 +25,7 @@ namespace Lab4
 				l.Text = f[i];
 				l.Font = ft;
 				l.Size = s;
+				l.AutoSize = true;
 				l.Location = new Point(0, this.Size.Height * i);
 				l.Dock = DockStyle.Top;
 				this.Controls.Add(l);

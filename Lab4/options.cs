@@ -10,19 +10,23 @@ using System.Windows.Forms;
 
 namespace Lab4
 {
-	public partial class view : Form
+	public partial class options : Form
 	{
-		Image im;
-		int scale = 0;
-
-		public view(Image i)
-		{
-			if (i == null)
-				throw new ArgumentNullException("i", "Изображение не должно быть пустым");
-			InitializeComponent();
-			im = i;
-			pictureBox1.Image = i;
-		}
 		
+		public options(Form parent)
+		{
+			this.Tag = parent;
+			InitializeComponent();
+		}
+
+		public int LC_LOW;
+		public int LC_HIGH;
+		public int BW_LEVEL;
+
+				private void button1_Click(object sender, EventArgs e)
+		{
+			(this.Tag as Form).Show();
+			this.Hide();
+		}
 	}
 }

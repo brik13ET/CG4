@@ -10,11 +10,19 @@ using System.Windows.Forms;
 
 namespace Lab4
 {
+
 	public partial class Form1 : Form
 	{
 		public Form1()
 		{
 			InitializeComponent();
+
+			var o = new options(this);
+			this.Tag = o;
+			o.Hide();
+			o.VisibleChanged += new EventHandler(updateOptions);
+
+
 			t = new ToolTip();
 			// Set up the delays for the ToolTip.
 			t.AutoPopDelay = 3000;
@@ -27,49 +35,28 @@ namespace Lab4
 			t.SetToolTip(pictureBox2, "Grayscale");
 			t.SetToolTip(pictureBox3, "LinearContrast");
 			t.SetToolTip(pictureBox4, "LinearSmoothMask");
-			t.SetToolTip(pictureBox8, "LMS diff Gray");
 			t.SetToolTip(pictureBox5, "Vector");
 
 		}
+
+		public void updateOptions(object sender, EventArgs e)
+		{
+			var o = (sender as options);
+			(o.Tag as Form1).LC_lo = o.trackBar1.Value;
+			(o.Tag as Form1).LC_hi = o.trackBar2.Value;
+			(o.Tag as Form1).BW_l = o.trackBar3.Value;
+			if ((o.Tag as Form1).pictureBox1.Image != null)
+				(o.Tag as Form1).redraw();
+		}
+
+		public int LC_lo;
+		public int LC_hi;
+		public int BW_l;
 
 		ToolTip t;
 
 		private void toolStripMenuItem1_Click(object sender, EventArgs e)
 		{
-			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
-			{
-				this.UseWaitCursor = true;
-				Cursor.Current = Cursors.WaitCursor;
-				this.Text = openFileDialog1.FileName;
-				Bitmap b = Bitmap.FromFile(openFileDialog1.FileName) as Bitmap;
-				pictureBox1.Image = b;
-				int w = b.Width;
-				int h = b.Height;
-				var map = new Color[w, h];
-
-				for (int i = 0; i < w; i++)
-				{
-					for (int j = 0; j < h; j++)
-					{
-						var c = b.GetPixel(i, j);
-						map[i, j] = c;
-					}
-				}
-
-				var graymap = grayscale(map);
-				var contrast = Linear_contrast(map);
-				var mask = linear_mask_filter(graymap);
-				var dif = diff(graymap, mask);
-				var mono = monochrome(graymap);
-				Cursor.Current = Cursors.Arrow;
-				this.UseWaitCursor = false;
-
-				Draw(graymap, pictureBox2);
-				Draw(contrast, pictureBox3);
-				Draw(mask, pictureBox4);
-				Draw(dif, pictureBox5);
-				Draw(mono, pictureBox9);
-			}
 		}
 
 		static void Draw(bool[,] m, PictureBox p)
@@ -144,14 +131,14 @@ namespace Lab4
 				}
 			return ret;
 		}
-		static bool[,] monochrome(byte[,] m)
+		bool[,] monochrome(byte[,] m)
 		{
 			int w = m.GetLength(0);
 			int h = m.GetLength(1);
 			var ret = new bool[w, h];
 			for (int i = 0; i < w; i++)
 				for (int j = 0; j < h; j++)
-					ret[i, j] = m[i, j] <= 127;
+					ret[i, j] = m[i, j] <= BW_l;
 			return ret;
 		}
 		static byte[,] diff(byte[,] a1, byte[,] a2)
@@ -198,7 +185,7 @@ namespace Lab4
 			}
 
 		}
-		static Color[,] Linear_contrast(Color[,] m)
+		Color[,] Linear_contrast(Color[,] m)
 		{
 			Color hi;
 			Color lo;
@@ -213,10 +200,10 @@ namespace Lab4
 			{
 				for (int j = 0; j < h; j++)
 				{
-					byte R = (byte)(int)((m[i, j].R - lo.R) * 255f / (float)qr);
-					byte G = (byte)(int)((m[i, j].G - lo.G) * 255f / (float)qg);
-					byte B = (byte)(int)((m[i, j].B - lo.B) * 255f / (float)qb);
-					ret[i, j] = Color.FromArgb(255, R, G, B);
+					byte R = (byte)(((m[i, j].R - lo.R) * (LC_hi - LC_lo) / (float)qr) + LC_lo);
+					byte G = (byte)(((m[i, j].G - lo.G) * (LC_hi - LC_lo) / (float)qg )+ LC_lo);
+					byte B = (byte)(((m[i, j].B - lo.B) * (LC_hi - LC_lo) / (float)qb) + LC_lo);
+					ret[i, j] = Color.FromArgb(R, G, B);
 				}
 			}
 			return ret;
@@ -230,15 +217,15 @@ namespace Lab4
 			for (int i = 0; i < w; i++)
 				for (int j = 0; j < h; j++)
 					cmap2[i+1, j+1] = cmap[i, j];
-			for (int i = 0; i < h; i++)
-			{
-				cmap2[i + 1, 0] = cmap[i, 0];
-				cmap2[i + 1, h] = cmap[i, h - 1];
-			}
 			for (int i = 0; i < w; i++)
 			{
+				cmap2[i + 1, 0] = cmap[i, 0];
+				cmap2[i + 1, h + 1] = cmap[i, h - 1];
+			}
+			for (int i = 0; i < h; i++)
+			{
 				cmap2[0, i + 1] = cmap[0, i];
-				cmap2[w, i + 1] = cmap[w- 1, i];
+				cmap2[w + 1, i + 1] = cmap[w- 1, i];
 			}
 			cmap2[0, 0] = cmap[0, 0];
 			cmap2[0, h] = cmap[0, h-1];
@@ -252,13 +239,13 @@ namespace Lab4
 				{ 1, 1, 1 }
 			};
 			byte bri = 0;
-			for (int i = 1; i < w; i++)
-				for (int j = 1; j < h; j++)
+			for (int i = 0; i < w; i++)
+				for (int j = 0; j < h; j++)
 				{
 					bri = 0;
 					for (int I = -1; I <= 1; I++)
 						for (int J = -1; J <= 1; J++)
-							bri += (byte)(cmap2[i + I, j + J] * M[1 + I, 1 + J] / 9);
+							bri += (byte)(cmap2[i + I + 1, j + J + 1] * M[1 + I, 1 + J] / 9);
 					ret[i, j] = (byte)bri;
 				}
 
@@ -327,28 +314,36 @@ namespace Lab4
 						max_r = j;
 					}
 				}
-			line(m, -1 / (float)Math.Tan(max_a), max_r / (float)Math.Sin(max_a));
 			string[] f = {
 				string.Format("y = kx + b, k={0:0000.0000}, b={1:0000.0000}", -1 / Math.Tan(max_a), max_r / Math.Sin(max_a) ),
 				string.Format("\u03C1=P/cos(\u03D5 - \u03B1), P = {0}, \u03B1 = {1:000.0000}", max_r, max_a )
 			};
+			line(m, max_a - 90, max_r);
 			var view_f = new formula_view(f);
 			view_f.Show();
 			return m;
 		}
 
-		private static void line(byte[,] m, float k, float b)
+		static void Dot(byte[,] m, int x, int y)
 		{
-			if (k > 1)
-				for (int i = 0; i < m.GetLength(1); i++)
-				{
-					if ((i - b) / k > 0)
-						m[(int)((i - b) / k), (int)i] = 255;
-				}
+			int w = m.GetLength(0), h = m.GetLength(1);
+			if (x < w && x >= 0 && y < h && y >=0)
+				m[x , y ] = 255;
+		}
+
+		static void line(byte[,] m, int angle, int rad)
+		{
+			int w = m.GetLength(0);
+			int h = m.GetLength(1);
+			int x0 = (int)(Math.Cos(Math.PI * (angle + 90) / 180) * rad);
+			int y0 = (int)(Math.Sin(Math.PI * (angle + 90) / 180) * rad);
+			angle %= 180;
+			if (Math.Abs(angle) <= 45)
+				for (int i = 0; i < w; i++)
+					Dot(m, x0 + i, (int)(Math.Tan(Math.PI * angle / 180) * i+ y0));
 			else
-				for (int i = 0; i < m.GetLength(0) && k * i + b < m.GetLength(1); i++)
-					if (k * i + b >= 0)
-						m[(int)i, (int)(k * i + b)] = 255;
+				for (int i = 0; i < h; i++)
+					Dot(m, (int)(Math.Tan(Math.PI * angle / 180) * (x0 + i)), y0 + i);
 		}
 		
 		static T[,] Copy <T>(T[,] a)
@@ -399,6 +394,92 @@ namespace Lab4
 		private void pictureBox6_Click(object sender, EventArgs e)
 		{
 
+		}
+
+		private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			(this.Tag as options).Show();
+			this.Hide();
+
+		}
+
+		private void toolStripMenuItem1_MouseHover(object sender, EventArgs e)
+		{
+			(sender as ToolStripMenuItem).ShowDropDown();
+		}
+
+		private void toolStripMenuItem1_Click(object sender, MouseEventArgs e)
+		{
+
+		}
+
+		public void redraw()
+		{
+			var b = (Bitmap)pictureBox1.Image;
+			int w = b.Width;
+			int h = b.Height;
+			var map = new Color[w, h];
+
+			for (int i = 0; i < w; i++)
+			{
+				for (int j = 0; j < h; j++)
+				{
+					var c = b.GetPixel(i, j);
+					map[i, j] = c;
+				}
+			}
+
+			var graymap = grayscale(map);
+			var contrast = Linear_contrast(map);
+			var mask = linear_mask_filter(graymap);
+			var dif = diff(graymap, mask);
+			var mono = monochrome(graymap);
+			Cursor.Current = Cursors.Arrow;
+			this.UseWaitCursor = false;
+
+			Draw(graymap, pictureBox2);
+			Draw(contrast, pictureBox3);
+			Draw(mask, pictureBox4);
+			Draw(dif, pictureBox5);
+			Draw(mono, pictureBox9);
+		}
+
+		private void pictureBox1_DoubleClick_1(object sender, EventArgs e)
+		{
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				this.UseWaitCursor = true;
+				Cursor.Current = Cursors.WaitCursor;
+				this.Text = openFileDialog1.FileName;
+				Bitmap b = Bitmap.FromFile(openFileDialog1.FileName) as Bitmap;
+				pictureBox1.Image = b;
+				int w = b.Width;
+				int h = b.Height;
+				var map = new Color[w, h];
+
+				for (int i = 0; i < w; i++)
+				{
+					for (int j = 0; j < h; j++)
+					{
+						var c = b.GetPixel(i, j);
+						map[i, j] = c;
+					}
+				}
+
+				var graymap = grayscale(map);
+				var contrast = Linear_contrast(map);
+				var mask = linear_mask_filter(graymap);
+				var dif = diff(graymap, mask);
+				var mono = monochrome(graymap);
+				Cursor.Current = Cursors.Arrow;
+				this.UseWaitCursor = false;
+
+				Draw(graymap, pictureBox2);
+				Draw(contrast, pictureBox3);
+				Draw(mask, pictureBox4);
+				Draw(dif, pictureBox5);
+				Draw(mono, pictureBox9);
+			}
 		}
 	}
 }

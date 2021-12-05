@@ -30,6 +30,7 @@
 		{
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -37,7 +38,6 @@
 			this.pictureBox2 = new System.Windows.Forms.PictureBox();
 			this.pictureBox3 = new System.Windows.Forms.PictureBox();
 			this.pictureBox4 = new System.Windows.Forms.PictureBox();
-			this.pictureBox8 = new System.Windows.Forms.PictureBox();
 			this.pictureBox5 = new System.Windows.Forms.PictureBox();
 			this.pictureBox6 = new System.Windows.Forms.PictureBox();
 			this.pictureBox7 = new System.Windows.Forms.PictureBox();
@@ -59,14 +59,11 @@
 			this.label7 = new System.Windows.Forms.Label();
 			this.panel8 = new System.Windows.Forms.Panel();
 			this.label8 = new System.Windows.Forms.Label();
-			this.panel5 = new System.Windows.Forms.Panel();
-			this.label5 = new System.Windows.Forms.Label();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
@@ -80,7 +77,6 @@
 			this.panel6.SuspendLayout();
 			this.panel7.SuspendLayout();
 			this.panel8.SuspendLayout();
-			this.panel5.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -98,10 +94,20 @@
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem});
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(50, 20);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
 			this.toolStripMenuItem1.Text = "Select";
-			this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+			this.toolStripMenuItem1.Click += new System.EventHandler(this.pictureBox1_DoubleClick_1);
+			this.toolStripMenuItem1.MouseHover += new System.EventHandler(this.toolStripMenuItem1_MouseHover);
+			// 
+			// optionsToolStripMenuItem
+			// 
+			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+			this.optionsToolStripMenuItem.Text = "Options";
+			this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem2
 			// 
@@ -113,7 +119,7 @@
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(24, 20);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(23, 20);
 			this.toolStripMenuItem3.Text = "-";
 			this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
 			// 
@@ -134,8 +140,9 @@
 			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.pictureBox1.TabIndex = 2;
 			this.pictureBox1.TabStop = false;
-			this.pictureBox1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
-			this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
+			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_DoubleClick);
+			this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick_1);
+			this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.toolStripMenuItem1_Click);
 			// 
 			// pictureBox2
 			// 
@@ -178,20 +185,6 @@
 			this.pictureBox4.TabIndex = 5;
 			this.pictureBox4.TabStop = false;
 			this.pictureBox4.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-			// 
-			// pictureBox8
-			// 
-			this.pictureBox8.BackColor = System.Drawing.SystemColors.AppWorkspace;
-			this.pictureBox8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.pictureBox8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pictureBox8.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.pictureBox8.Location = new System.Drawing.Point(0, 20);
-			this.pictureBox8.Name = "pictureBox8";
-			this.pictureBox8.Size = new System.Drawing.Size(156, 156);
-			this.pictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pictureBox8.TabIndex = 6;
-			this.pictureBox8.TabStop = false;
-			this.pictureBox8.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
 			// 
 			// pictureBox5
 			// 
@@ -251,7 +244,6 @@
 			this.flowLayoutPanel1.Controls.Add(this.panel6);
 			this.flowLayoutPanel1.Controls.Add(this.panel7);
 			this.flowLayoutPanel1.Controls.Add(this.panel8);
-			this.flowLayoutPanel1.Controls.Add(this.panel5);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 24);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -466,30 +458,6 @@
 			this.label8.TabIndex = 13;
 			this.label8.Text = "Hough Diff";
 			// 
-			// panel5
-			// 
-			this.panel5.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.panel5.Controls.Add(this.pictureBox8);
-			this.panel5.Controls.Add(this.label5);
-			this.panel5.Location = new System.Drawing.Point(503, 191);
-			this.panel5.Name = "panel5";
-			this.panel5.Size = new System.Drawing.Size(160, 180);
-			this.panel5.TabIndex = 14;
-			// 
-			// label5
-			// 
-			this.label5.AutoSize = true;
-			this.label5.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.label5.Dock = System.Windows.Forms.DockStyle.Top;
-			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label5.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.label5.Location = new System.Drawing.Point(0, 0);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(173, 20);
-			this.label5.TabIndex = 13;
-			this.label5.Text = "Skelet_Zong_Sueng";
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -506,7 +474,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
@@ -528,8 +495,6 @@
 			this.panel7.PerformLayout();
 			this.panel8.ResumeLayout(false);
 			this.panel8.PerformLayout();
-			this.panel5.ResumeLayout(false);
-			this.panel5.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -543,7 +508,6 @@
 		private System.Windows.Forms.PictureBox pictureBox2;
 		private System.Windows.Forms.PictureBox pictureBox3;
 		private System.Windows.Forms.PictureBox pictureBox4;
-		private System.Windows.Forms.PictureBox pictureBox8;
 		private System.Windows.Forms.PictureBox pictureBox5;
 		private System.Windows.Forms.PictureBox pictureBox6;
 		private System.Windows.Forms.PictureBox pictureBox7;
@@ -564,11 +528,10 @@
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Panel panel8;
 		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Panel panel5;
-		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Panel panel9;
 		private System.Windows.Forms.PictureBox pictureBox9;
 		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
 	}
 }
 
