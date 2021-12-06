@@ -212,9 +212,8 @@
 			this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.pictureBox6.TabIndex = 8;
 			this.pictureBox6.TabStop = false;
-			this.pictureBox6.Click += new System.EventHandler(this.pictureBox6_Click);
-			this.pictureBox6.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-			this.pictureBox6.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox6_Click_1);
+			this.pictureBox6.Click += new System.EventHandler(this.pictureBox1_DoubleClick);
+			this.pictureBox6.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick_1);
 			// 
 			// pictureBox7
 			// 

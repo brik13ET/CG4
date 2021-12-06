@@ -368,31 +368,6 @@ namespace Lab4
 
 		private void pictureBox6_Click_1(object sender, MouseEventArgs e)
 		{
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
-			{
-				this.UseWaitCursor = true;
-				Cursor.Current = Cursors.WaitCursor;
-				this.Text = openFileDialog1.FileName;
-
-				var b = new Bitmap(openFileDialog1.FileName);
-				Color[,] buf = new Color[b.Width, b.Height];
-				for (int i = 0; i < b.Width; i++)
-					for (int j = 0; j < b.Height; j++)
-						buf[i, j] = b.GetPixel(i, j);
-				var gray = grayscale(buf);
-				var h = hough(Copy<byte>(gray));
-				var dif = diff(h, gray);
-
-				Draw(h, pictureBox6);
-				Draw(dif, pictureBox7);
-
-				this.UseWaitCursor = false;
-				Cursor.Current = Cursors.Arrow;
-			}
-		}
-
-		private void pictureBox6_Click(object sender, EventArgs e)
-		{
 
 		}
 
