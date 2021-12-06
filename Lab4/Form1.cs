@@ -365,12 +365,7 @@ namespace Lab4
 				f.Show();
 			}
 		}
-
-		private void pictureBox6_Click_1(object sender, MouseEventArgs e)
-		{
-
-		}
-
+		
 		private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			(this.Tag as options).Show();
@@ -382,11 +377,7 @@ namespace Lab4
 		{
 			(sender as ToolStripMenuItem).ShowDropDown();
 		}
-
-		private void toolStripMenuItem1_Click(object sender, MouseEventArgs e)
-		{
-
-		}
+		
 
 		public void redraw()
 		{
@@ -428,32 +419,29 @@ namespace Lab4
 				this.Text = openFileDialog1.FileName;
 				Bitmap b = Bitmap.FromFile(openFileDialog1.FileName) as Bitmap;
 				pictureBox1.Image = b;
-				int w = b.Width;
-				int h = b.Height;
-				var map = new Color[w, h];
+				redraw();
+			}
+		}
 
+		private void pictureBox6_Click(object sender, EventArgs e)
+		{
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				this.UseWaitCursor = true;
+				Cursor.Current = Cursors.WaitCursor;
+				this.Text = openFileDialog1.FileName;
+				Bitmap b = Bitmap.FromFile(openFileDialog1.FileName) as Bitmap;
+				int w = b.Width, h = b.Height;
+				Color[,] m = new Color[w, h];
 				for (int i = 0; i < w; i++)
-				{
 					for (int j = 0; j < h; j++)
-					{
-						var c = b.GetPixel(i, j);
-						map[i, j] = c;
-					}
-				}
+						m[i, j] = b.GetPixel(i, j);
+				var g = grayscale(m);
+				var _h = hough(g);
+				var d = diff(g, _h);
+				Draw(_h, pictureBox6);
+				Draw(d, pictureBox7);
 
-				var graymap = grayscale(map);
-				var contrast = Linear_contrast(map);
-				var mask = linear_mask_filter(graymap);
-				var dif = diff(graymap, mask);
-				var mono = monochrome(graymap);
-				Cursor.Current = Cursors.Arrow;
-				this.UseWaitCursor = false;
-
-				Draw(graymap, pictureBox2);
-				Draw(contrast, pictureBox3);
-				Draw(mask, pictureBox4);
-				Draw(dif, pictureBox5);
-				Draw(mono, pictureBox9);
 			}
 		}
 	}

@@ -97,7 +97,7 @@
 			this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.optionsToolStripMenuItem});
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(50, 20);
 			this.toolStripMenuItem1.Text = "Select";
 			this.toolStripMenuItem1.Click += new System.EventHandler(this.pictureBox1_DoubleClick_1);
 			this.toolStripMenuItem1.MouseHover += new System.EventHandler(this.toolStripMenuItem1_MouseHover);
@@ -105,7 +105,7 @@
 			// optionsToolStripMenuItem
 			// 
 			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
 			this.optionsToolStripMenuItem.Text = "Options";
 			this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
 			// 
@@ -119,7 +119,7 @@
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(23, 20);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(24, 20);
 			this.toolStripMenuItem3.Text = "-";
 			this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
 			// 
@@ -134,6 +134,7 @@
 			this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pictureBox1.ImageLocation = "\"D:\\Downloads\\a-low-contrast-image-b-after-enhancement_Q320.jpg\"";
 			this.pictureBox1.Location = new System.Drawing.Point(0, 20);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(156, 156);
@@ -206,6 +207,7 @@
 			this.pictureBox6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.pictureBox6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pictureBox6.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pictureBox6.ImageLocation = "\"D:\\Downloads\\line.bmp\"";
 			this.pictureBox6.Location = new System.Drawing.Point(0, 20);
 			this.pictureBox6.Name = "pictureBox6";
 			this.pictureBox6.Size = new System.Drawing.Size(156, 156);
@@ -213,7 +215,7 @@
 			this.pictureBox6.TabIndex = 8;
 			this.pictureBox6.TabStop = false;
 			this.pictureBox6.Click += new System.EventHandler(this.pictureBox1_DoubleClick);
-			this.pictureBox6.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick_1);
+			this.pictureBox6.DoubleClick += new System.EventHandler(this.pictureBox6_Click);
 			// 
 			// pictureBox7
 			// 
